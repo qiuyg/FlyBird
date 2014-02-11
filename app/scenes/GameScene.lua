@@ -121,10 +121,12 @@ function GameScene:onEnter()
                 self.fsm__:doEvent("first_tap")
                 self.flappyBird:setVy(4.0)
                 self.flappyBird:resetAngle()
+                self.flappyBird:gameStart()
                 --MainScene.flappyBird:setPosition(ccp(MainScene.flappyBird:getPositionX(), MainScene.flappyBird:getPositionY() + 80))
             elseif self.fsm__:getState() == "game" then
                 self.flappyBird:setVy(4.0)
                 self.flappyBird:resetAngle()
+                self.flappyBird:playFlyWing()
             elseif self.fsm__:getState() == "end" then 
 
             end

@@ -11,15 +11,18 @@ function Bird:ctor(world,index)
 	display.addSpriteFramesWithFile(BIRD_TEXTURE_DATA_FILENAME, BIRD_TEXTURE_IMAGE_FILENAME)
     local _index = index or 0
 	local birdFrames = display.newFrames("bird".._index.."_%d.png", 0, 3)
-    
-    self.birdAnimation = display.newAnimation(birdFrames, 0.15)
-    self.birdAnimation:retain()
+    self.birdAnimation = {}
+    self.birdAnimation[1] = display.newAnimation(birdFrames, 0.15)
+    self.birdAnimation[1]:retain()
+
+    self.birdAnimation[2] = display.newAnimation(birdFrames, 0.1)
+    self.birdAnimation[2]:retain()
 
     self.bird_ = display.newSprite(birdFrames[1])
     self.bird_:runAction(CCRepeatForever:create(
         CCSpawn:createWithTwoActions(transition.sequence({CCMoveBy:create(0.5 , ccp(0, 10)), 
                                                           CCMoveBy:create(0.4 , ccp(0, -10))}),
-                                     CCRepeat:create(CCAnimate:create(self.birdAnimation), 2)
+                                     CCRepeat:create(CCAnimate:create(self.birdAnimation[1]), 2)
     )))
     self:addChild(self.bird_)
 
@@ -57,6 +60,16 @@ function Bird:ctor(world,index)
     end)
 end
 
+function Bird:gameStart()
+  self.bird_:stopAllActions();
+  self:playFlyWing()
+end
+
+function Bird:playFlyWing()
+  self.bird_:runAction(CCRepeat:create(CCAnimate:create(self.birdAnimation[2]),3))
+end
+
+
 function Bird:setVy(vy)
     self.vy = vy
 end
@@ -72,17 +85,9 @@ function Bird:getBirdPos()
   return pt
 end
 
--- function Bird:getBirdBoundingBox()
---  	local  parent = self.bird_:getParent()
---     local  pt = parent:convertToWorldSpace(ccp(self.bird_:getPositionX(), self.bird_:getPositionY()))
---     self.rectBird = self.bird_:getBoundingBox()
---     self.rectBird.origin = ccpAdd(self.rectBird.origin, ccp(pt.x + 4 , pt.y + 10))
---     self.rectBird.size = CCSizeMake(self.rectBird.size.width - 8, self.rectBird.size.height - 12)
---     return self.rectBird
--- end
-
 function Bird:onExit()
-    self.birdAnimation:release()
+    self.birdAnimation[1]:release()
+    self.birdAnimation[2]:release()
 end
 
 return Bird
